@@ -1,0 +1,127 @@
+\documentclass{article}
+
+\usepackage{url} % Tidy web links
+\usepackage{microtype} % 'Improved' typesetting
+\usepackage{parskip} % Adds white space between paragraphs
+\usepackage[super]{natbib} % Citations using superscript
+\usepackage[a4paper, left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm]{geometry}
+\usepackage{longtable,booktabs}  % For tables
+\usepackage{caption} % For figure and table captions
+\usepackage{graphicx} % Adds more functionality to graphics for inclusion of figures
+\usepackage{lineno} % Allows use of \linenumbers to add line numbers 
+\usepackage[toc,page]{appendix}
+\usepackage[utf8]{inputenc}
+\frenchspacing % No double spacing between sentences
+\linespread{1.2} % Set linespace
+\usepackage{authblk} % For author formatting
+\usepackage{lmodern} % A scalable font - avoids erros due to non-sclabale fonts
+
+\DeclareUnicodeCharacter{2060}{\nolinebreak} % Prevent unicode (U+2060) error on local complile
+\renewcommand{\thefootnote}{\alph{footnote}} % Use letters for footnotes
+
+
+% For commenting
+
+% Choose your own colour
+\usepackage{color}
+
+\newcommand{\kpnote}[2][\textcolor{magenta}{\dagger}]{\textcolor{magenta}{$#1$}\marginpar{\color{magenta}\raggedright\tiny$#1$ #2}}
+\newcommand{\kpFIXME}[1]{\textcolor{magenta}{[\textbf{FIXME} \textsl{#1}]}}
+
+\newcommand{\manote}[2][\textcolor{red}{\dagger}]{\textcolor{magenta}{$#1$}\marginpar{\color{magenta}\raggedright\tiny$#1$ #2}}
+\newcommand{\maFIXME}[1]{\textcolor{red}{[\textbf{FIXME} \textsl{#1}]}}
+
+\title{Use of explainable machine learning to analyse variation in diagnosis rates for dementia with Lewy bodies. A proposed pilot study.}
+
+\author{Michael Allen*, Kerry Pearn, Louise Allan, Richard Everson, Joao Delgado, Joseph Butchart, David Llewellyn\\
+
+\footnotesize{*Contact: m.allen@exeter.ac.uk}}
+\date{February 2023}
+
+\begin{document}
+
+\maketitle
+
+\section*{Summary}
+
+The proposed study uses explainable machine learning to analyze the variation in diagnosis rates for dementia with Lewy bodies (DLB). DLB is a common cause of dementia in older adults, with a reported prevalence of 4\%. However, its true frequency remains unclear, with some studies reporting a range of 0-23\% of all dementia cases. DLB has a more severe clinical profile than Alzheimer’s disease (AD) and often leads to higher mortality, increased healthcare resource use, and a higher burden on caregivers. Improved identification of DLB has the potential to improve care for patients and reduce burden on care-givers.
+
+Research questions are:
+
+\begin{enumerate}
+    \item Are there differences in rates of DLB diagnosis between Alzheimer’s Disease Centers in the National Alzheimer’s Coordinating Center (NACC) data set?
+    \item Can machine learning models predict the dementia subtype diagnosis that a patient would likely receive at each center?
+    \item How much would diagnosis of DLB vary between centers if all centers saw the same cohort of patients (e.g. 1,000 patients sampled from across the NACC data set)?
+    \item What is the influence of patient characteristics, including the center attended, on the probability of receiving a diagnosis of DLB at each center?
+    \item Does use of free text data in the NACC data set improve predictive accuracy of predicting DLB diagnosis at each center?
+\end{enumerate}
+
+\newpage
+
+\section{Background}
+
+Dementia with Lewy bodies (DLB) is increasingly recognized as a common cause of dementia in older people. Diagnosis rates are about 4\%, but its true frequency remains unclear, with studies reporting a prevalence range from zero to 23\% of all dementia cases\cite{jones_prevalence_2014}. Diagnosis may also be delayed compared to Alzheimer’s disease (AD)\cite{zweig_lewy_2014}.
+
+DLB has a more severe clinical profile than AD, with DLB patients having higher mortality\cite{williams_survival_2006}, increased healthcare resource use\cite{bostrom_patients_2007}, and a higher burden on caregivers\cite{zweig_lewy_2014, ricci_clinical_2009}.
+
+Kane \emph{et al.}\cite{kane_clinical_2018} investigated diagnosis of DLB in two regions of the UK and found that DLB prevalence in individual services ranged from 2.4 to 5.9\%. They concluded \emph{`The significant variation in DLB diagnostic rates between these two regions may reflect true differences in disease prevalence, but more likely differences in diagnostic practice. The systematic introduction of more standardised diagnostic practice could improve the rates of diagnosis of both conditions.'}
+
+We have previously used machine learning to investigate between-hospital variation in clinical decision-making in emergency stroke care\cite{allen_stoke, allen_nihr}. The parallel with diagnosis of DLB is that use of thrombolysis treatment varies between hopsitals from less that 5\% to more than 25\%, and so a key question was how much of this variation was due to differences in local patient populations, and how much was due to differences between hospitals. We found that at least half of the between-hospital variation was due to differences between hospitals, with the largest component of that effect coming from differences in which patients a hospital would, or would not, deliver thrombolysis to. We have since gone on to build an \emph{explainable} machine learning model to understand the characteristics of patients where different hospitals would likely make different decision\footnote{\url{https://samuel-book.github.io/samuel_shap_paper_1/}}. For example, we found that hospitals with lower use of thrombolysis were particularly less likely to administer thrombolysis to patients with milder strokes, to those with imprecisely known onset time, or to patients with existing disability before the stroke.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Research questions}
+
+\begin{enumerate}
+    \item Are their differences in rates of DLB diagnosis between Alzheimer’s Disease Centers in the National Alzheimer’s Coordinating Center (NACC) data set?
+    \item Given data on a patient (up to the point of diagnosis) can a machine learning model predict the dementia subtype diagnosis that a patient would likely receive at each center? This allows us to ask the counter-factual question \emph{`What diagnosis would my patient have likely received if they had attended other teams?'}. 
+    \begin{itemize}
+        \item Models will be optimised on accuracy* of prediction for DLB at a team level. As prevalence of DLB is low (likely to be $<$ 5\%), we will investigate methods to enhance accuracy at detecting low-frequency targets, such as by use of Synthetic Minority Over-Sampling Technique, \emph{SMOTE}\cite{chawla_smote_2002}.
+        \item How much would diagnosis of DLB vary between centers if all centers saw the same cohort of patients (e.g. 1,000 patients sampled from across the NACC data set)?
+    \end{itemize}
+    \item What is the influence of patient characteristics on the probability of receiving a diagnosis of DLB will be evaluated using 'SHAP' values\cite{lundberg_unified_2017}. This analysis will provide insight into how much the diagnosis is influenced by the Alzheimer’s Disease Center each patient attends.
+    \item Does use of free text data improve predictive accuracy of the above models?
+\end{enumerate}
+
+\emph{* Accuracy will usually be measured by Receiver Operating Characteristic Area Under Curve, measured using stratified k-fold validation.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Dementia subtypes under study}
+
+The four dementia types to be predicted are:
+
+\begin{itemize}
+    \item Alzheimer’s disease
+    \item Dementia with Lewy bodies
+    \item Vascular dementia
+    \item Other
+\end{itemize}
+
+\emph{Note}: We will investigate the best way of dealing with mixed dementia diagnosis. Possible methods include:
+
+\begin{itemize}
+    \item Building models to predict whether a diagnosis for each subtype is present or not, regardless of whether another type is also present.
+    \item Build a multi-label model where each dementia subtype may be predicted to be present, without exclusivity between the subtypes.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Data}
+
+For the pilot work we will use the \emph{Uniform Data Set} from the \emph{National Alzheimer's Coordinating Center\footnote{\url{https://naccdata.org/}}}. 
+
+\section{Machine learning models}
+
+To answer research questions above, it is likely that we will need to combine different machine learning models in an \emph{ensemble model}. Individual machine learning models include:
+\begin{itemize}
+    \item A structured data algorithm for predicting diagnosis subtype from patient data, e.g. eXtreme Gradient Boosting (\emph{XGBoost}) coupled to a Shapley Additive Value (\emph{SHAP}) explainability model.
+    \item Combining a structured data model with a free-text natural language model, such as \emph{MedSpaCy\footnote{\url{https://github.com/medspacy/medspacy}}}.
+
+\end{itemize}
+
+\bibliographystyle{naturemag}
+\bibliography{references}
+
+\end{document}
+
